@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.view.View;
 import android.view.Menu;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
@@ -14,7 +16,8 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
 	    findViewById(R.id.sign_in_button).setOnClickListener(this);
-	    findViewById(R.id.sign_out_button).setOnClickListener(this);        
+	    findViewById(R.id.sign_out_button).setOnClickListener(this);   
+	    
 	}
 
 	@Override
