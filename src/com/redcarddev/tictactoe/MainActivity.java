@@ -2,6 +2,7 @@ package com.redcarddev.tictactoe;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
@@ -10,6 +11,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
+	
+	int REQUEST_LEADERBOARD = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,21 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.menu_leaderboard:
+	        	
+	        	String leaderboard = String.format(getResources().getString(R.string.leaderboard_fastest_win));
+	        	
+	        	startActivityForResult(getGamesClient().getLeaderboardIntent(leaderboard), REQUEST_LEADERBOARD);
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
 	}
 	
 	@Override
