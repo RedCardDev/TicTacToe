@@ -10,5 +10,10 @@
         android:id="@+id/menu_leaderboard"
         android:showAsAction="never"
         android:title="@string/menu_leaderboard" />
+    
+    <item
+        android:id="@+id/menu_achievements"
+        android:showAsAction="never"
+        android:title="@string/menu_achievements" />
 
 </menu>

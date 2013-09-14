@@ -13,6 +13,7 @@ import com.google.example.games.basegameutils.BaseGameActivity;
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
 	
 	int REQUEST_LEADERBOARD = 1;
+	int REQUEST_ACHIEVEMENTS = 2;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,11 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	        	
 	        	startActivityForResult(getGamesClient().getLeaderboardIntent(leaderboard), REQUEST_LEADERBOARD);
 	            return true;
+	        case R.id.menu_achievements:
+	        	
+	        	startActivityForResult(getGamesClient().getAchievementsIntent(), REQUEST_ACHIEVEMENTS);
+	        	
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

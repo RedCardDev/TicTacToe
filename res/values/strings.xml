@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     
     <string name="menu_leaderboard">Leaderboard</string>
+    <string name="menu_achievements">Achievements</string>
 
 </resources>
