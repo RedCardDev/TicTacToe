@@ -8,5 +8,7 @@
     <string name="menu_signout">Sign Out</string>
     <string name="menu_leaderboard">Leaderboard</string>
     <string name="menu_achievements">Achievements</string>
+    <string name="menu_invitations">Invitations</string>
+    <string name="menu_send_invitations">Send Invitation</string>
 
 </resources>
