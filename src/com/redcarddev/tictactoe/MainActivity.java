@@ -12,6 +12,8 @@ import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
 	
+	Menu menu;
+	
 	int REQUEST_LEADERBOARD = 1;
 	int REQUEST_ACHIEVEMENTS = 2;
 
@@ -19,14 +21,13 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
-	    findViewById(R.id.sign_in_button).setOnClickListener(this);
-	    findViewById(R.id.sign_out_button).setOnClickListener(this);   
-	    
+	    findViewById(R.id.sign_in_button).setOnClickListener(this); 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+		this.menu = menu;
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -46,6 +47,15 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	        	startActivityForResult(getGamesClient().getAchievementsIntent(), REQUEST_ACHIEVEMENTS);
 	        	
 	        	return true;
+	        	
+	        case R.id.menu_signout:
+	        	
+	        	// sign out.
+		        signOut();
+
+		        // show sign-in button, hide the sign-out button
+		        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+	        	
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -57,20 +67,12 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	        // start the asynchronous sign in flow
 	        beginUserInitiatedSignIn();
 	    }
-	    else if (view.getId() == R.id.sign_out_button) {
-	        // sign out.
-	        signOut();
-
-	        // show sign-in button, hide the sign-out button
-	        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-	        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-	    }
 	}
 	
 	public void onSignInSucceeded() {
 	    // show sign-out button, hide the sign-in button
 	    findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-	    findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+	    this.menu.findItem(R.id.menu_signout).setVisible(true);
 
 	    // (your code here: update UI, enable functionality that depends on sign in, etc)
 	}
@@ -79,7 +81,7 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	public void onSignInFailed() {
 	    // Sign in has failed. So show the user the sign-in button.
 	    findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-	    findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+	    this.menu.findItem(R.id.menu_signout).setVisible(false);
 	}
 
 }
