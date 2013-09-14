@@ -3,6 +3,7 @@ package com.redcarddev.tictactoe;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
@@ -20,6 +22,8 @@ import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
 	
+	private String LOGTAG = MainActivity.class.getName();
+	
 	Menu menu;
 	
 	int REQUEST_LEADERBOARD = 1;
@@ -29,7 +33,7 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
-	    findViewById(R.id.sign_in_button).setOnClickListener(this); 
+	    findViewById(R.id.sign_in_button).setOnClickListener(this);
 	    
 	    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
@@ -65,6 +69,7 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 
 		        // show sign-in button, hide the sign-out button
 		        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+		        
 		        return true;
 		        
 	        case R.id.menu_invitations:
@@ -109,18 +114,6 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	    // show sign-out button, hide the sign-in button
 	    findViewById(R.id.sign_in_button).setVisibility(View.GONE);
 	    this.menu.findItem(R.id.menu_signout).setVisible(true);
-	    
-	    if (getInvitationId() != null) {
-	        Builder roomConfigBuilder =
-	            makeBasicRoomConfigBuilder();
-	        roomConfigBuilder.setInvitationIdToAccept(getInvitationId());
-	        getGamesClient().joinRoom(roomConfigBuilder.build());
-
-	        // prevent screen from sleeping during handshake
-	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-	        // go to game screen
-	    }
 
 	    // (your code here: update UI, enable functionality that depends on sign in, etc)
 	}
@@ -129,48 +122,31 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 	public void onSignInFailed() {
 	    // Sign in has failed. So show the user the sign-in button.
 	    findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-	    this.menu.findItem(R.id.menu_signout).setVisible(false);
 	}
 	
 	@Override
 	public void onActivityResult(int request, int response, Intent data) {
-	    if (request == 10000) {
+	    if (request == 10001) {
 	        if (response != Activity.RESULT_OK) {
-	            // user canceled
+	            // canceled
 	            return;
 	        }
 
-	        // get the invitee list
+	        // get the selected invitation
 	        Bundle extras = data.getExtras();
-	        final ArrayList<String> invitees =
-	            data.getStringArrayListExtra(GamesClient.EXTRA_PLAYERS);
+	        Invitation invitation =
+	            extras.getParcelable(getGamesClient().EXTRA_INVITATION);
 
-	        // get automatch criteria
-	        Bundle autoMatchCriteria = null;
-	        int minAutoMatchPlayers =
-	            data.getIntExtra(GamesClient.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-	        int maxAutoMatchPlayers =
-	            data.getIntExtra(GamesClient.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-
-	        if (minAutoMatchPlayers > 0) {
-	            autoMatchCriteria =
-	                RoomConfig.createAutoMatchCriteria(
-	                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-	        } else {
-	            autoMatchCriteria = null;
-	        }
-
-	        // create the room and specify a variant if appropriate
-	        RoomConfig.Builder roomConfigBuilder = makeBasicRoomConfigBuilder();
-	        roomConfigBuilder.addPlayersToInvite(invitees);
-	        if (autoMatchCriteria != null) {
-	            roomConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-	        }
-	        RoomConfig roomConfig = roomConfigBuilder.build();
-	        getGamesClient().createRoom(roomConfig);
+	        // accept it!
+	        RoomConfig roomConfig = makeBasicRoomConfigBuilder()
+	                .setInvitationIdToAccept(invitation.getInvitationId())
+	                .build();
+	        getGamesClient().joinRoom(roomConfig);
 
 	        // prevent screen from sleeping during handshake
 	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+	        // go to game screen
 	    }
 	}
 	
